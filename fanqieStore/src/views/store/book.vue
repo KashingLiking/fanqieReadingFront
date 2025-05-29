@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref, onMounted, reactive, computed, watch} from 'vue';
 import {ElMessage, UploadProps} from 'element-plus';
-import {Back, Service, Delete, Plus, Comment} from '@element-plus/icons-vue'
+import {Back, Service, Delete, Plus, Comment, Star, ShoppingCart, Promotion, MessageBox} from '@element-plus/icons-vue'
 import {deleteProduct, getSpecificProduct, getStockpile, updateProduct} from "@/api/product";
 import { useRoute,useRouter } from "vue-router";
 import { addBookToCart } from "@/api/cart";
@@ -60,6 +60,29 @@ const amount = ref(0);
 
 // 购买数量
 const buyNum = ref(0);
+
+// 商品评价
+const commentInput = ref('')
+const commentList = ref([
+  {
+    user: '小明',
+    content: '这个商品真的太棒了！质量非常好，使用起来很顺手，完全符合我的预期，非常满意这次购买！',
+    score: 5,
+    time: '2024-11-01 10:30:25',
+  },
+  {
+    user: '李华',
+    content: '收到货后发现和描述的不太一样，有些瑕疵，不过客服态度很好，处理问题很及时。总体来说还不错。',
+    score: 3,
+    time: '2024-11-02 14:20:15',
+  },
+  {
+    user: '张三',
+    content: '物流很快，包装也很严实，商品质量超出了我的期望，价格也很实惠，以后还会再来购买！',
+    score: 5,
+    time: '2024-11-03 09:45:30',
+  }
+]);
 
 // 修改数据
 interface UpdateInfo {
@@ -269,8 +292,14 @@ const onAddItem = () => {
     <el-header class="bar-header">
       <div style="display: flex">
         <div style="color: black; font-weight: bold; font-size: x-large; margin-left: 10px; margin-top: 10px">番茄商店</div>
-        <el-icon style="margin-left: 1100px; margin-top: 25px"><Service /></el-icon>
+        <el-icon style="margin-left: 850px; margin-top: 25px"><Star /></el-icon>
+        <div style="margin-top: 20px" @click="">收藏夹</div>
+        <el-icon style="margin-left: 30px; margin-top: 25px"><ShoppingCart /></el-icon>
+        <div style="margin-top: 20px" @click="">购物车</div>
+        <el-icon style="margin-left: 30px; margin-top: 25px"><Service /></el-icon>
         <div style="margin-top: 20px" @click="afterSale">售后</div>
+        <el-icon style="margin-left: 30px; margin-top: 25px"><MessageBox /></el-icon>
+        <div style="margin-top: 20px" @click="">消息</div>
         <el-button class="submit-change" type="warning" @click="centerDialogVisible2=true" size="default" style="margin-left: 60px; margin-top: 15px; font-size: small">更改商品信息</el-button>
       </div>
     </el-header>
@@ -319,14 +348,30 @@ const onAddItem = () => {
       </el-main>
     </el-container>
     <!--商品评价-->
-    <el-container style="height: 200px">
+    <el-container style="height: 200px;display: flex; flex-direction: column">
       <div style="display: flex; height: 70px">
         <div style="color: black; font-weight: bold; font-size: xx-large; margin-left: 40px; margin-top: 10px">商品评价</div>
         <div style="font-size: x-large; margin-left: 10px"><el-icon><Comment /></el-icon></div>
         <div style="color: black; font-size: large; margin-left: 900px; margin-top: 20px">推荐商品人数：{{0}}</div>
       </div>
+      <div style="width: 96%;margin-left: 2%;margin-top: 10px">
+        <div style="display: flex;height: 50px; margin-top: 10px">
+          <el-avatar :size="50" :src="avatarUrl" />
+          <el-input
+              v-model="commentInput"
+              style="width: 90%; height: 40px;margin-top: 5px;margin-left: 8px"
+              placeholder="说点什么吧~"
+              clearable
+          />
+          <el-button class="send-comment" @click="" style="margin-left: 10px;margin-top: 5px;height: 40px;width: 60px;border-radius: 10px;background-color: #565656;color: white;font-size: large"><el-icon><Promotion /></el-icon></el-button>
+        </div>
+       <el-card class="comment-card" v-for="(comment,index) in commentList" :key="index" style="margin-top: 30px; height: 200px;border-radius: 20px">
+        <div class="username" style="height: 30px; font-weight: bolder">{{comment.user}} :</div>
+        <div class="comment-content" style="height: 105px">{{comment.content}}</div>
+        <div class="comment-time" style="font-size: small;color: #b8b7b7">{{comment.time}}</div>
+       </el-card>
+      </div>
     </el-container>
-    <el-container style="height: 1000px"></el-container>
     <el-backtop :right="50" :bottom="50" style="color: #565656"/>
   </el-container>
 
@@ -465,6 +510,10 @@ const onAddItem = () => {
   width: 120px;
   height: 120px;
   text-align: center;
+}
+
+.send-comment:hover{
+  transform: translateY(-5px);
 }
 
 

@@ -6,8 +6,14 @@ import {addProduct, getProductInfo, getSpecificProduct} from "@/api/product";
 import {addAdvertisement, deleteAdvertisement, getAdvertisement, updateAdvertisement} from "@/api/advertisement";
 import { useRouter } from 'vue-router';
 import {addBookToCart, deleteCart, getCart} from "@/api/cart";
+import {getUserDetail} from "@/api/accounts";
 
 const router = useRouter();
+
+// 获得用户信息
+const username = String(sessionStorage.getItem('username'));
+const userRole = ref("")
+const userAvatar = ref("");
 
 // 购物车提交窗口是否可见
 const centerDialogVisible1 = ref(false);
@@ -156,6 +162,19 @@ const cartData = ref<CartInfo>({
   totalAmount: 0,
 });
 
+// 获取用户信息
+const fetchUserInfo = async () => {
+  try {
+    getUserDetail(username).then((res) => {
+      console.log("user detail:",res.data.data);
+      userRole.value = res.data.data.role;
+      userAvatar.value = res.data.data.avatar;
+    });
+  }catch (error) {
+    console.error("获取用户信息失败！", error);
+  }
+}
+
 // 获取已有书籍列表
 const fetchBookList = async () => {
   try {
@@ -194,38 +213,6 @@ const fetchAdvertisement = async () => {
     ElMessage.error('广告获取失败，请稍后再试！');
   }
 };
-
-// 以下为测试数据
-// const advertisementList = ref([
-//   {
-//     id: 1,
-//     title: 'books1111111111111111111111111111',
-//     content: 'stringdfgndkslpakdlavjfkdqaslcjnvdfskazxmcnv fhdjskazxmcjnvd 33333333333333333333333333333333333333333333333333333333333333333333333333333333',
-//     imageUrl: 'https://lab-blue-whale.oss-cn-nanjing.aliyuncs.com/%E6%B2%99%E6%BC%A0.jpg',
-//     productId: 1,
-//   },
-//   {
-//     id: 2,
-//     title: 'books1111111111111111111111111111',
-//     content: 'stringdfgndkslpakdlavjfkdqaslcjnvdfskazxmcnv fhdjskazxmcjnvd 33333333333333333333333333333333333333333333333333333333333333333333333333333333',
-//     imageUrl: 'https://lab-blue-whale.oss-cn-nanjing.aliyuncs.com/%E6%B2%99%E6%BC%A0.jpg',
-//     productId: 1,
-//   },
-//   {
-//     id: 3,
-//     title: 'books1111111111111111111111111111',
-//     content: 'stringdfgndkslpakdlavjfkdqaslcjnvdfskazxmcnv fhdjskazxmcjnvd 33333333333333333333333333333333333333333333333333333333333333333333333333333333',
-//     imageUrl: 'https://lab-blue-whale.oss-cn-nanjing.aliyuncs.com/%E6%B2%99%E6%BC%A0.jpg',
-//     productId: 1,
-//   },
-//   {
-//     id: 4,
-//     title: 'books1111111111111111111111111111',
-//     content: 'stringdfgndkslpakdlavjfkdqaslcjnvdfskazxmcnv fhdjskazxmcjnvd 33333333333333333333333333333333333333333333333333333333333333333333333333333333',
-//     imageUrl: 'https://lab-blue-whale.oss-cn-nanjing.aliyuncs.com/%E6%B2%99%E6%BC%A0.jpg',
-//     productId: 1,
-//   }
-// ])
 
 // 计算购物车内商品总价
 const sumPrice = computed(() => {
@@ -444,6 +431,7 @@ function customUpload(file: File){
 
 // 在页面加载时获取所有书籍、广告和购物车
 onMounted(() => {
+  fetchUserInfo();
   fetchBookList();
   fetchCart();
   fetchAdvertisement();
@@ -509,7 +497,8 @@ onMounted(() => {
                   </el-button>
                 </template>
               </el-input>
-              <el-avatar :size="40" :src="avatarUrl" style="margin-left: 50px" @click="clickAvatar"/>
+              <el-avatar :size="40" :src="userAvatar" style="margin-left: 50px" @click="clickAvatar"/>
+              <img src="https://lab-blue-whale.oss-cn-nanjing.aliyuncs.com/VIP%E6%9C%AA%E7%82%B9%E4%BA%AE%E7%89%88.png" alt="图片描述" style="margin-top: 15px;margin-left: -15px;width: 25px;height: 25px">
               <el-button class="search" @click="clickMessage" style="margin-left: 20px; height: 40px; width: 40px; border-radius: 40%">
                 <el-icon style="vertical-align: middle">
                   <BellFilled/>
@@ -520,7 +509,7 @@ onMounted(() => {
           <!--卡片推荐模块-->
           <div style="display: flex">
             <div style="font-weight: bold; font-size: xx-large">今日推荐</div>
-            <el-button @click="centerDialogVisible3 = true;" type="info" style="margin-left: 900px; margin-top: 8px">添加广告</el-button>
+            <el-button v-if="userRole=='admin'" @click="centerDialogVisible3 = true;" type="info" style="margin-left: 900px; margin-top: 8px">添加广告</el-button>
           </div>
           <div style="margin-top: 10px">
             <el-carousel :interval="4000" type="card" height="300px">
@@ -552,7 +541,7 @@ onMounted(() => {
           </div>
           <div style="margin-top: 70px; height: 60px; display: flex">
             <div style="font-weight: bold; font-size: xx-large">商品列表</div>
-            <el-button @click="centerDialogVisible2 = true;" type="info" style="margin-left: 900px; margin-top: 15px">添加商品</el-button>
+            <el-button v-if="userRole=='admin'" @click="centerDialogVisible2 = true;" type="info" style="margin-left: 900px; margin-top: 15px">添加商品</el-button>
           </div>
         </el-card>
       </div>
@@ -604,6 +593,7 @@ onMounted(() => {
         </el-row>
       </div>
     </el-container>
+    <el-backtop :right="50" :bottom="50" style="color: #565656"/>
   </el-container>
 
   <!--购物车提交弹出窗口-->
