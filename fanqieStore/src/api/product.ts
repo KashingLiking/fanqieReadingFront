@@ -13,6 +13,7 @@ type ProductInfo = {
     description: string,
     cover: string,
     detail: string,
+    bookType: string,
     specifications: Specification[];
 }
 
@@ -31,7 +32,9 @@ type UpdateInfo = {
     description: string,
     cover: string,
     detail: string,
+    bookType: string,
     specifications: Specifications[],
+    recommendCount: number,
     stockpile: Stockpile,
 }
 

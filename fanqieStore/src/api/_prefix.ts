@@ -12,3 +12,6 @@ export const CART_MODULE = `${API_MODULE}/cart`
 
 // 广告模块
 export const ADVERTISEMENT_MODULE = `${API_MODULE}/advertisements`
+
+// 评论模块
+export const COMMENT_MODULE = `${API_MODULE}/comments`

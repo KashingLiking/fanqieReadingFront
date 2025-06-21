@@ -13,29 +13,15 @@
 
         <!-- 🌟 调整字段顺序符合常见注册流程 -->
         <el-form-item label="用户名" prop="username">
-          <el-input
-              v-model="registerForm.username"
-              placeholder="8-16位字母/数字/下划线"
-              clearable
-          />
+          <el-input v-model="registerForm.username" placeholder="8-16位字母/数字/下划线" clearable />
         </el-form-item>
 
         <el-form-item label="设置密码" prop="password">
-          <el-input
-              v-model="registerForm.password"
-              type="password"
-              show-password
-              placeholder="至少8位，包含大小写+数字+特殊字符"
-          />
+          <el-input v-model="registerForm.password" type="password" show-password placeholder="至少8位，包含大小写+数字+特殊字符" />
         </el-form-item>
 
         <el-form-item label="确认密码" prop="confirmPassword">
-          <el-input
-              v-model="registerForm.confirmPassword"
-              type="password"
-              show-password
-              placeholder="请再次输入密码"
-          />
+          <el-input v-model="registerForm.confirmPassword" type="password" show-password placeholder="请再次输入密码" />
         </el-form-item>
 
         <el-form-item label="真实姓名" prop="name">
@@ -43,25 +29,14 @@
         </el-form-item>
 
         <el-form-item label="头像上传" prop="avatar">
-          <el-upload
-              class="avatar-uploader"
-              action="/api/upload"
-              :show-file-list="false"
-              :on-success="handleUploadSuccess"
-              :before-upload="beforeAvatarUpload"
-          >
+          <el-upload class="avatar-uploader" action="/api/upload" :show-file-list="false" :on-success="handleUploadSuccess" :before-upload="beforeAvatarUpload">
             <template v-if="!registerForm.avatar">
               <el-button type="primary" icon="el-icon-upload">
                 点击上传头像
               </el-button>
               <div class="upload-tip">支持JPG/PNG格式，小于2MB</div>
             </template>
-            <el-image
-                v-else
-                :src="registerForm.avatar"
-                class="avatar-preview"
-                fit="cover"
-            />
+            <el-image v-else :src="registerForm.avatar" class="avatar-preview" fit="cover" />
           </el-upload>
         </el-form-item>
 
@@ -83,11 +58,7 @@
         </el-collapse>
 
         <el-form-item class="action-buttons">
-          <el-button
-              type="primary"
-              size="large"
-              @click="handleRegister"
-          >
+          <el-button type="primary" size="large" @click="handleRegister">
             立即注册
           </el-button>
           <div class="login-link">
@@ -108,7 +79,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import {register} from "@/api/accounts";
+import { register } from "@/api/accounts";
 import { axios } from '../../utils/request'; // 新增引入
 import { debounce } from 'lodash'
 import { ElMessage } from 'element-plus';
@@ -189,8 +160,10 @@ const rules = {
     }
   ],
   confirmPassword: [
-    { required: true,
-      message: '请确认密码', trigger: 'blur' },
+    {
+      required: true,
+      message: '请确认密码', trigger: 'blur'
+    },
     {
       validator: (rule, value, callback) => {
         if (value !== registerForm.value.password) {
@@ -202,8 +175,10 @@ const rules = {
       trigger: 'blur'
     }
   ],
-  name: [{ required: true,
-    message: '请输入姓名', trigger: 'blur' }],
+  name: [{
+    required: true,
+    message: '请输入姓名', trigger: 'blur'
+  }],
   email: [
     {
       validator: (rule, value, callback) => {
@@ -282,7 +257,7 @@ const handleUploadSuccess = (res) => {
   }
 }
 const handlePreviewAvatar = () => {
-  if(registerForm.value.avatar){
+  if (registerForm.value.avatar) {
     avatarPreviewVisible.value = true;
   } else {
     ElMessage.warning('请先输入头像地址');
@@ -299,7 +274,7 @@ const handleRegister = async () => {
     if (res.data && res.data.userId) {
       sessionStorage.setItem('userId', res.data.userId);
     }
-    if (res.data.code === '000' || res.data.code === '200') {
+    if (res.code === '200') {
       ElMessage.success('注册成功')
       router.push('/login')
     } else {
@@ -322,6 +297,7 @@ const handleRegister = async () => {
 <style scoped>
 .role-selector {
   margin-bottom: 24px;
+
   ::v-deep .el-form-item__content {
     justify-content: center;
   }
@@ -334,16 +310,19 @@ const handleRegister = async () => {
 
 .action-buttons {
   margin-top: 32px;
+
   ::v-deep .el-form-item__content {
     flex-direction: column;
     align-items: center;
     gap: 12px;
   }
 }
+
 /* 上传按钮样式 */
 .avatar-uploader {
   .el-upload {
     width: 100%;
+
     .el-button {
       width: 200px;
       height: 40px;
@@ -360,7 +339,7 @@ const handleRegister = async () => {
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   }
 }
 

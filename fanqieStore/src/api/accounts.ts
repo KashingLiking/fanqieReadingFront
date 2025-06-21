@@ -82,7 +82,7 @@ export const register = (registerInfo: RegisterInfo) => {
         headers: { 'Content-Type': 'application/json' }
     }).then(res => {
         console.log(res.data);
-        if (res.data.code !== '000' && res.data.code !== '200') {
+        if (res.data.code !== '200' && res.data.code !== '200') {
             throw new Error(res.data.msg || '注册失败')
         }
         return res.data
@@ -115,6 +115,9 @@ export const forgotPassword = (forgotInfo: ForgotInfo) => {
             return res;
         });
 };
+
+
+
 /**
  * 获取用户详情服务
  * @param username 路径参数用户名
